@@ -49,10 +49,14 @@ function App() {
 
   const checkAnswer = (event) => {
     event.preventDefault();
-    if (input.toLowerCase() === flashcards[currentIndex].answer.toLowerCase()) {
+    let cleanInput = input.toLowerCase().trim().replace(/[^\w\s]/g, '')
+    let cleanAns = flashcards[currentIndex].answer.toLowerCase().trim().replace(/[^\w\s]/g, '')
+    if (cleanInput === cleanAns) {
+      if (correct === null) {
+        setStreak(streak + 1);
+      }
       setCorrect(true);
-      setStreak(streak + 1);
-      toggleAnswer();
+      setShowAnswer(!showAnswer);
     } else {
       setCorrect(false);
       if (streak > highestStreak) {
@@ -101,8 +105,15 @@ function App() {
     }, 100);
   };
 
-  const toggleAnswer = () => {
-    if (input === '') {
+  const toggleCard = () => {
+    let cleanInput = input.toLowerCase().trim().replace(/[^\w\s]/g, '')
+    let cleanAns = flashcards[currentIndex].answer.toLowerCase().trim().replace(/[^\w\s]/g, '')
+    if (cleanInput === cleanAns) {
+      if (correct === null) {
+        setStreak(streak + 1);
+      }
+      setCorrect(true);
+    } else if (!showAnswer) {
       setCorrect(false);
       if (streak > highestStreak) {
         sethighestStreak(streak);
@@ -131,7 +142,7 @@ function App() {
         <button onClick={() => shuffle(flashcards)} className="button">Shuffle Cards</button>
       </div>
       <h4>Streak: {streak} | Highest streak: {highestStreak}</h4>
-      <div className={`flip-card ${showAnswer ? 'flipped' : ''} ${selectedMode}`} onClick={toggleAnswer}>
+      <div className={`flip-card ${showAnswer ? 'flipped' : ''} ${selectedMode}`} onClick={toggleCard}>
         <div className="flip-card-inner">
           <div className="flip-card-front">
             <p>{flashcards[currentIndex].question}</p>
