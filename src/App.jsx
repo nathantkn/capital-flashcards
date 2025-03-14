@@ -39,6 +39,8 @@ function App() {
   const [selectedMode, setSelectedMode] = useState('easy');
   const [input, setInput] = useState('');
   const [correct, setCorrect] = useState(null);
+  const [streak, setStreak] = useState(0);
+  const [highestStreak, sethighestStreak] = useState(0);
 
   const setGuess = (event) => {
     setInput(event.target.value);
@@ -49,8 +51,14 @@ function App() {
     event.preventDefault();
     if (input.toLowerCase() === flashcards[currentIndex].answer.toLowerCase()) {
       setCorrect(true);
+      setStreak(streak + 1);
+      toggleAnswer();
     } else {
       setCorrect(false);
+      if (streak > highestStreak) {
+        sethighestStreak(streak);
+      }
+      setStreak(0);
     }
   };
 
@@ -94,6 +102,13 @@ function App() {
   };
 
   const toggleAnswer = () => {
+    if (input === '') {
+      setCorrect(false);
+      if (streak > highestStreak) {
+        sethighestStreak(streak);
+      }
+      setStreak(0);
+    }
     setShowAnswer(!showAnswer);
   };
 
@@ -113,7 +128,9 @@ function App() {
         <button className={`button ${selectedMode === 'easy' ? 'selected' : ''}`} onClick={() => selectMode('easy')}>Easy</button>
         <button className={`button ${selectedMode === 'hard' ? 'selected' : ''}`} onClick={() => selectMode('hard')}>Hard</button>
         <button className={`button ${selectedMode === 'all' ? 'selected' : ''}`} onClick={() => selectMode('all')}>All</button>
+        <button onClick={() => shuffle(flashcards)} className="button">Shuffle Cards</button>
       </div>
+      <h4>Streak: {streak} | Highest streak: {highestStreak}</h4>
       <div className={`flip-card ${showAnswer ? 'flipped' : ''} ${selectedMode}`} onClick={toggleAnswer}>
         <div className="flip-card-inner">
           <div className="flip-card-front">
@@ -141,7 +158,6 @@ function App() {
       <div>
         <button onClick={selectLastCard} className="button">⭠</button>
         <button onClick={selectNextCard} className="button">⭢</button>
-        <button onClick={() => shuffle(flashcards)} className="button">Shuffle</button>
       </div>
     </div>
   )
