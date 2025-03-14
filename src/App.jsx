@@ -37,19 +37,20 @@ function App() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [flashcards, setFlashcards] = useState(easy);
   const [selectedMode, setSelectedMode] = useState('easy');
-  const [input, setInput] = useState({guess: '', correct: false});
-  const guess = input.guess;
+  const [input, setInput] = useState('');
+  const [correct, setCorrect] = useState(null);
 
   const setGuess = (event) => {
-    setInput({guess: event.target.value, correct: false});
+    setInput(event.target.value);
+    setCorrect(null);
   };
 
   const checkAnswer = (event) => {
     event.preventDefault();
-    if (guess.toLowerCase() === flashcards[currentIndex].answer.toLowerCase()) {
-      setInput({guess: guess, correct: true});
+    if (input.toLowerCase() === flashcards[currentIndex].answer.toLowerCase()) {
+      setCorrect(true);
     } else {
-      setInput({guess: guess, correct: false});
+      setCorrect(false);
     }
   };
 
@@ -57,7 +58,8 @@ function App() {
     setShowAnswer(false);
     setCurrentIndex(0);
     setSelectedMode(mode);
-    setInput({ guess: '', correct: false });
+    setInput('');
+    setCorrect(null);
     if (mode === 'easy') {
       setTimeout(() => {
         setFlashcards(easy);
@@ -75,7 +77,8 @@ function App() {
 
   const selectNextCard = () => {
     setShowAnswer(false);
-    setInput({ guess: '', correct: false });
+    setInput('');
+    setCorrect(null);
     setTimeout(() => {
       setCurrentIndex((currentIndex + 1) % flashcards.length);
     }, 100);
@@ -83,7 +86,8 @@ function App() {
 
   const selectLastCard = () => {
     setShowAnswer(false);
-    setInput({ guess: '', correct: false });
+    setInput('');
+    setCorrect(null);
     setTimeout(() => {
       setCurrentIndex((currentIndex - 1 + flashcards.length) % flashcards.length);
     }, 100);
@@ -92,6 +96,13 @@ function App() {
   const toggleAnswer = () => {
     setShowAnswer(!showAnswer);
   };
+
+  const shuffle = (array) => {
+    array.sort(function (a, b) {
+      return Math.random() - 0.5;
+    });
+    selectNextCard();
+  }
   
   return (
     <div className="App">
@@ -119,10 +130,10 @@ function App() {
         <input
             type="text"
             placeholder="Your answer"
-            value={guess}
+            value={input}
             onChange={setGuess}
             disabled={showAnswer}
-            className={input.correct ? 'correct' : guess ? 'incorrect' : ''}
+            className={correct === null ? '' : correct ? 'correct' : 'incorrect'}
           />
           <button className="button" type="submit" disabled={showAnswer}>Submit</button>
         </form>
@@ -130,6 +141,7 @@ function App() {
       <div>
         <button onClick={selectLastCard} className="button">⭠</button>
         <button onClick={selectNextCard} className="button">⭢</button>
+        <button onClick={() => shuffle(flashcards)} className="button">Shuffle</button>
       </div>
     </div>
   )
