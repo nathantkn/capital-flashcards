@@ -37,11 +37,27 @@ function App() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [flashcards, setFlashcards] = useState(easy);
   const [selectedMode, setSelectedMode] = useState('easy');
+  const [input, setInput] = useState({guess: '', correct: false});
+  const guess = input.guess;
+
+  const setGuess = (event) => {
+    setInput({guess: event.target.value, correct: false});
+  };
+
+  const checkAnswer = (event) => {
+    event.preventDefault();
+    if (guess.toLowerCase() === flashcards[currentIndex].answer.toLowerCase()) {
+      setInput({guess: guess, correct: true});
+    } else {
+      setInput({guess: guess, correct: false});
+    }
+  };
 
   const selectMode = (mode) => {
     setShowAnswer(false);
     setCurrentIndex(0);
     setSelectedMode(mode);
+    setInput({ guess: '', correct: false });
     if (mode === 'easy') {
       setTimeout(() => {
         setFlashcards(easy);
@@ -59,6 +75,7 @@ function App() {
 
   const selectNextCard = () => {
     setShowAnswer(false);
+    setInput({ guess: '', correct: false });
     setTimeout(() => {
       setCurrentIndex((currentIndex + 1) % flashcards.length);
     }, 100);
@@ -66,6 +83,7 @@ function App() {
 
   const selectLastCard = () => {
     setShowAnswer(false);
+    setInput({ guess: '', correct: false });
     setTimeout(() => {
       setCurrentIndex((currentIndex - 1 + flashcards.length) % flashcards.length);
     }, 100);
@@ -96,8 +114,23 @@ function App() {
           </div>
         </div>
       </div>
-      <button onClick={selectLastCard} className="button">⭠</button>
-      <button onClick={selectNextCard} className="button">⭢</button>
+      <div>
+        <form onSubmit={checkAnswer}>
+        <input
+            type="text"
+            placeholder="Your answer"
+            value={guess}
+            onChange={setGuess}
+            disabled={showAnswer}
+            className={input.correct ? 'correct' : guess ? 'incorrect' : ''}
+          />
+          <button className="button" type="submit" disabled={showAnswer}>Submit</button>
+        </form>
+      </div>
+      <div>
+        <button onClick={selectLastCard} className="button">⭠</button>
+        <button onClick={selectNextCard} className="button">⭢</button>
+      </div>
     </div>
   )
 }

@@ -87,3 +87,11 @@
   max-width: 300px;
   max-height: 300px;
 }
+
+.correct {
+  border: 2px solid green;
+}
+
+.incorrect {
+  border: 2px solid red;
+}
